@@ -54,5 +54,8 @@ setup(
     classifiers=CLASSIFIERS,
     install_requires=requirements,
     include_package_data=True,
+    entry_points={'console_scripts': [
+        'mcot=mcot.core.scripts:run',
+    ]},
     packages=find_namespace_packages(include=['mcot.core']),
 )

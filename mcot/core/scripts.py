@@ -74,7 +74,7 @@ class _ScriptDirectories(object):
     def __init__(self, ):
         self.modules = []
 
-    def add(self, name: str, group=None):
+    def add(self, name: str, group):
         """
         Adds a new script directory
 
@@ -83,31 +83,18 @@ class _ScriptDirectories(object):
         mcot.core.scripts.directories.add(__name__)
 
         :param name: __name__ of the script directory
-        :param group: what group to put the scripts in (defaults to package name or sub-package name if package name is mcot)
+        :param group: what group to put the scripts in (set to None for no group)
         """
-        module = importlib.import_module(name)
-        if group is None:
-            parts = module.__name__.split('.')
-            if parts[0] == '__main__':
-                group = None
-            elif parts[0] == 'mcot':
-                group = parts[1]
-            else:
-                group = parts[0]
         self.modules.append((group, importlib.import_module(name)))
-
-    @staticmethod
-    def _iter_groups(group, paths):
-        for module_info in pkgutil.iter_modules(paths):
-            if module_info.ispkg:
-                yield
 
     def all_scripts(self, ):
         scripts = {}
 
         def process(module, script_dict):
             for module_info in pkgutil.iter_modules(module.__path__):
-                full_name = '.'.join(module.__name__, module_info.name)
+                if module_info.name.startswith('_'):
+                    continue
+                full_name = f'{module.__name__}.{module_info.name}'
                 if module_info.name in script_dict:
                     raise ValueError(f"Dual script definition for {module_info.name}")
                 if module_info.ispkg:
@@ -205,10 +192,11 @@ class _ScriptDirectories(object):
 
         current_group = []
         scripts = self.all_scripts()
-        while len(choose_script) != 0 and isinstance(scripts, dict) and choose_script[0] in scripts:
+        while len(choose_script) != 0 and isinstance(scripts, dict) and choose_script[0] in scripts.keys():
             current_group.append(choose_script[0])
             scripts = scripts[choose_script[0]]
             choose_script = choose_script[1:]
+
 
         if isinstance(scripts, dict):
             print('Usage: mcot [<script_group>...] <script_name> <args>...')
@@ -231,6 +219,18 @@ class _ScriptDirectories(object):
 
 
 directories = _ScriptDirectories()
+
+
+def load_all_mcot():
+    mcot = importlib.import_module("mcot")
+    for module_info in pkgutil.iter_modules(mcot.__path__):
+        if module_info.ispkg:
+            importlib.import_module(f"mcot.{module_info.name}")
+
+
+def run(argv=None):
+    load_all_mcot()
+    directories(argv)
 
 
 def _nifti2cifti(img):
