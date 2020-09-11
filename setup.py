@@ -6,7 +6,7 @@ from setuptools import setup, find_namespace_packages
 
 ###################################################################
 
-VERSION = '0.2.0'
+VERSION = '0.2.1'
 KEYWORDS = []
 CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
