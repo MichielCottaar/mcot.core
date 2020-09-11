@@ -8,7 +8,7 @@ import nibabel
 from nibabel import gifti
 from . import grid, utils
 from .cortical_mesh import CorticalMesh
-from dipy.core import sphere
+from fsl.wrappers import gps, LOAD
 
 
 class WeightedOrientation(object):
@@ -79,9 +79,7 @@ class WeightedOrientation(object):
             rand_orient = np.randn(3, norient)
             rand_orient /= np.sqrt(np.sum(rand_orient ** 2, 0))
 
-            hsph_initial = sphere.HemiSphere(*rand_orient)
-            hsph_dispersed, _ = sphere.disperse_charges(hsph_initial, 3000)
-            self.smooth_orient = hsph_dispersed.vertices
+            self.smooth_orient = gps(LOAD, ndir=3000)
 
         orientations = np.concatenate((self.smooth_orient, -self.smooth_orient), 0)
         w_ix, w_pos = self.white_hit.ray_intersect(mm_index, orientations)

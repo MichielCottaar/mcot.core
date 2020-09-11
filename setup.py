@@ -2,18 +2,12 @@
 
 """The setup script."""
 
-import codecs
-import os
-import re
-
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 ###################################################################
 
-PACKAGES = []
-META_PATH = os.path.join("mcot", "core", "__init__.py")
-
-KEYWORDS = ['mcot.core', ]
+VERSION = '0.1.0mcot/core/__init__.py'
+KEYWORDS = []
 CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
     'Intended Audience :: Developers',
@@ -27,9 +21,6 @@ CLASSIFIERS = [
 
 ###################################################################
 
-about = {}
-with open(os.path.join("mcot", "core", "__init__.py")) as f:
-    exec(f.read(), about)
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -41,22 +32,24 @@ requirements = [
     'numpy',
     'scipy',
     'nibabel',
+    'numba',
+    'six',
+    'loguru',
 ]
 
 setup(
-    name=about["__title__"],
-    author=about["__author__"],
-    author_email=about["__email__"],
-    version=about["__version__"],
-    description=about["__summary__"],
+    name='mcot.core',
+    author='Michiel Cottaar',
+    author_email='MichielCottaar@pm.me',
+    version=VERSION,
+    description="core utilities to work with my code",
     long_description=readme + '\n\n' + history,
     long_description_content_type="text/x-rst",
-    license=about["__license__"],
-    url=about["__url__"],
+    license="MIT",
+    url="https://git.fmrib.ox.ac.uk/ndcn0236/mcutils",
     keywords=KEYWORDS,
     classifiers=CLASSIFIERS,
     install_requires=requirements,
     include_package_data=True,
-    packages=find_packages(include=['mcot.core']),
-    zip_safe=False,
+    packages=find_namespace_packages(include=['mcot.core']),
 )
