@@ -1,4 +1,6 @@
 """Package for mcot.core."""
+from . import surface, cifti, greyordinate, log, scripts, spherical
+from .write_gifti import write_gifti
 
 __title__ = "mcot.core"
 __summary__ = "core utilities to run most of my code"
@@ -10,9 +12,3 @@ __author__ = "Michiel Cottaar"
 __email__ = "MichielCottaar@ndcn.ox.ac.uk"
 
 __license__ = "MIT license",
-
-__all__ = [
-    "__title__", "__summary__", "__url__", "__version__", "__author__",
-    "__email__", "__license__",
-]
-
