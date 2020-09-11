@@ -46,7 +46,7 @@ def run_script(add_to_parser, run_from_args, argc=None):
     module = sys.modules[module_name]
     doc_string = module.__doc__
 
-    logger.enable('mcutils')
+    logger.enable('mcot.core')
     script_logger = logger.opt(depth=1)
     parser = argparse.ArgumentParser(doc_string)
     add_to_parser(parser)

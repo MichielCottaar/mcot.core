@@ -3,8 +3,8 @@ from nibabel import gifti
 import nibabel as nib
 from loguru import logger
 import numpy as np
-from mcutils.utils.colour import qualitative
-from mcutils.surface.cortical_mesh import BrainStructure
+import colorcet as cc
+from mcot.core.surface.cortical_mesh import BrainStructure
 
 
 def correct_type(arr: np.ndarray):
@@ -57,7 +57,7 @@ def write_gifti(filename, arr_list, brain_structure, intent_list=None, color_map
         color_map = {}
     if color_map is not None:
         labels = np.unique(np.concatenate([np.unique(arr) for arr in arr_list]))
-        colour_sequence = qualitative()
+        colour_sequence = cc.glasbey
 
         for label in labels:
             if label not in color_map:

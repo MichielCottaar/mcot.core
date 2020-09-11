@@ -4,10 +4,10 @@ from typing import Sequence
 import numpy as np
 import nibabel as nib
 from nibabel.gifti import GiftiImage
-from mcutils.surface import cortical_mesh
+from mcot.core.surface import cortical_mesh
 import argparse
 from fsl.utils.path import hasExt
-from mcutils.utils.write_gifti import write_gifti
+from mcot.core import write_gifti
 from . import cifti
 from numpy.lib.stride_tricks import as_strided
 from contextlib import contextmanager

@@ -1,9 +1,9 @@
 from mcot.core.surface import CorticalMesh, Mesh2D, BrainStructure, Cortex, read_HCP
 import numpy as np
 from scipy import spatial
-import dipy
 import os
 from operator import xor
+from fsl.wrappers import gps, LOAD
 
 fsaverage_directory = os.path.join(os.path.split(__file__)[0], 'fsaverage')
 
@@ -61,12 +61,8 @@ def sphere(norient=300) -> Mesh2D:
     :param norient: number of vertices
     :return: mesh of sphere with radius 1
     """
-    rand_orient = np.randn(3, norient)
-    rand_orient /= np.sqrt(np.sum(rand_orient ** 2, 0))
-    hsph_initial = dipy.core.sphere.HemiSphere(*rand_orient)
-    hsph_dispersed, _ = dipy.core.sphere.disperse_charges(hsph_initial, 3000)
+    points = gps(LOAD, norient, optws=True)
 
-    points = np.concatenate([hsph_dispersed.vertices, -hsph_dispersed.vertices], 0)
     ch = spatial.ConvexHull(points)
     mesh = Mesh2D(ch.points.T, ch.simplices.T)
 
