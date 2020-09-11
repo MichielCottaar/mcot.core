@@ -6,7 +6,7 @@ from setuptools import setup, find_namespace_packages
 
 ###################################################################
 
-VERSION = '0.1.0mcot/core/__init__.py'
+VERSION = 'VERSION = '0.2.0'mcot/core/__init__.py'
 KEYWORDS = []
 CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
