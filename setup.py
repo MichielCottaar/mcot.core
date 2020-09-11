@@ -64,6 +64,7 @@ requirements = [
     'zarr',
     'h5py',
     'colorcet',
+    'dask[array]',
 ]
 
 setup(
