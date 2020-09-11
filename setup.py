@@ -6,7 +6,7 @@ from setuptools import setup, find_namespace_packages
 
 ###################################################################
 
-VERSION = 'VERSION = '0.2.0'mcot/core/__init__.py'
+VERSION = '0.2.0'
 KEYWORDS = []
 CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
@@ -35,6 +35,9 @@ requirements = [
     'numba',
     'six',
     'loguru',
+    'fslpy',
+    'zarr',
+    'h5py',
 ]
 
 setup(

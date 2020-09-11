@@ -2,6 +2,7 @@
 Utilities to create a common interface to all the scripts
 """
 from pathlib import Path
+import pkgutil
 from typing import Union, Iterator, Sequence, Tuple
 import importlib
 import ast
@@ -63,66 +64,70 @@ def run_script(add_to_parser, run_from_args, argc=None):
     script_logger.info('finished script')
 
 
-class ScriptDirectory(object):
+class _ScriptDirectories(object):
     """
-    Directory containing 1 or more python scripts
+    All script directories that have been registered
 
     All .py files within this directory are considered scripts (except __init__ and __main__)
     Any sub-directories are considered sub-scripts (as long as they contain a __init__)
     """
-    def __init__(self, directory: Union[Path, str]=None, in_module=None):
-        """
-        Creates a new script directory
+    def __init__(self, ):
+        self.modules = []
 
-        :param directory: Path to the directory
-        :param in_module: dot-separated string of parent modules (default: evaluated on the fly)
+    def add(self, name: str, group=None):
         """
-        if directory is None:
-            directory = Path(__file__).parent.parent / 'scripts'
-        self.directory = Path(directory)
-        if not self.directory.is_dir():
-            raise ValueError(f"{directory} is not a directory")
-        if in_module is None:
-            full_path = self.directory.absolute()
-            in_module = full_path.name
-            for parent in full_path.parents:
-                if (parent / '__init__.py').is_file():
-                    in_module = parent.name + '.' + in_module
+        Adds a new script directory
+
+        In the __init__ of the script directory add:
+
+        mcot.core.scripts.directories.add(__name__)
+
+        :param name: __name__ of the script directory
+        :param group: what group to put the scripts in (defaults to package name or sub-package name if package name is mcot)
+        """
+        module = importlib.import_module(name)
+        if group is None:
+            parts = module.__name__.split('.')
+            if parts[0] == '__main__':
+                group = None
+            elif parts[0] == 'mcot':
+                group = parts[1]
+            else:
+                group = parts[0]
+        self.modules.append((group, importlib.import_module(name)))
+
+    @staticmethod
+    def _iter_groups(group, paths):
+        for module_info in pkgutil.iter_modules(paths):
+            if module_info.ispkg:
+                yield
+
+    def all_scripts(self, ):
+        scripts = {}
+
+        def process(module, script_dict):
+            for module_info in pkgutil.iter_modules(module.__path__):
+                full_name = '.'.join(module.__name__, module_info.name)
+                if module_info.name in script_dict:
+                    raise ValueError(f"Dual script definition for {module_info.name}")
+                if module_info.ispkg:
+                    script_dict[module_info.name] = {}
+                    process(
+                        importlib.import_module(full_name),
+                        script_dict[module_info.name]
+                    )
                 else:
-                    break
-        self.in_module = in_module
+                    script_dict[module_info.name] = full_name
 
-    @property
-    def name(self, ):
-        return self.directory.name
-
-    def _script_groups(self, ) -> Iterator["ScriptDirectory"]:
-        """
-        Iterates through the sub-directories containing scripts
-
-        :yields: sub script directories
-        """
-        for directory in self.directory.iterdir():
-            if directory.is_dir() and (directory / '__init__.py').is_file():
-                yield ScriptDirectory(directory, in_module=self.in_module + '.' + directory.name)
-
-    def _scripts(self, in_sub_group=False, as_module=False) -> Iterator[Path]:
-        """
-        Iterates through the scripts (not included in sub-directories)
-        """
-        for filename in self.directory.iterdir():
-            if (
-                    filename.name[-3:] == '.py' and
-                    filename.name not in ('__main__.py', '__init__.py') and
-                    filename.is_file()
-            ):
-                if as_module:
-                    yield self.in_module + '.' + filename.name[:-3]
-                else:
-                    yield filename
-        if in_sub_group:
-            for group in self._script_groups():
-                yield from group._scripts(in_sub_group=True, as_module=as_module)
+        for name, module in self.modules:
+            if name in scripts:
+                raise ValueError(f"Dual script definition for {name}")
+            if name is None:
+                process(module, scripts)
+            else:
+                scripts[name] = {}
+                process(module, scripts[name])
+        return scripts
 
     def __iter__(self, ):
         """
@@ -175,6 +180,16 @@ class ScriptDirectory(object):
                 return group.get(args[1:])
         return self, args
 
+    @staticmethod
+    def _scripts2string(scripts, indent=0):
+        if isinstance(scripts, dict):
+            res = "\n"
+            for name in sorted(scripts):
+                res = res + " " * indent + f"- {name}:" + _ScriptDirectories._scripts2string(scripts[name], indent + 2)
+            return res + ""
+        else:
+            return "\n"
+
     def __call__(self, args=None):
         """
         Runs a script identified by the arguments
@@ -183,25 +198,39 @@ class ScriptDirectory(object):
         """
         if args is None:
             args = sys.argv[1:]
-        if len(args) != 0:
-            args = list(args[0].split('.')) + list(args[1:])
-        script, remaining_args = self.get(args)
-        if isinstance(script, ScriptDirectory):
-            print('Usage: mc_script [<script_group>...] <script_name> <args>...')
-            if script == self:
+        if '.' in args[0]:
+            choose_script, args = args[0].split('.'), args[1:]
+        else:
+            choose_script, args = args, None
+
+        current_group = []
+        scripts = self.all_scripts()
+        while len(choose_script) != 0 and isinstance(scripts, dict) and choose_script[0] in scripts:
+            current_group.append(choose_script[0])
+            scripts = scripts[choose_script[0]]
+            choose_script = choose_script[1:]
+
+        if isinstance(scripts, dict):
+            print('Usage: mcot [<script_group>...] <script_name> <args>...')
+            if len(current_group) == 0:
                 print('Available scripts:')
             else:
-                print(f'Available scripts in script group {script.name}:')
-            print(str(script))
+                print(f'Available scripts in script group {".".join(current_group)}:')
+            print(self._scripts2string(scripts))
             print('')
             print("Error: Incomplete or invalid script name provided")
             exit(1)
-        sys.argv = [script] + list(remaining_args)
-        script = importlib.import_module(f'{script}')
+        if args is None and len(choose_script) != 0:
+            raise ValueError(f"Script already fully define before processing .{'.'.join(choose_script)}")
+
+        script = importlib.import_module(scripts)
         if hasattr(script, 'main'):
             script.main()
         else:
             run_script(script.add_to_parser, script.run_from_args)
+
+
+directories = _ScriptDirectories()
 
 
 def _nifti2cifti(img):
