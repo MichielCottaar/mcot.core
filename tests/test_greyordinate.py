@@ -2,7 +2,7 @@ from mcot.core import greyordinate
 import numpy as np
 import nibabel as nib
 from fsl.utils.tempdir import tempdir
-from mcot.core.write_gifti import write_gifti
+from mcot.core import write_gifti
 from numpy import testing
 from pytest import raises
 from filecmp import cmp

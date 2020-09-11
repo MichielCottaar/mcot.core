@@ -197,7 +197,6 @@ class _ScriptDirectories(object):
             scripts = scripts[choose_script[0]]
             choose_script = choose_script[1:]
 
-
         if isinstance(scripts, dict):
             print('Usage: mcot [<script_group>...] <script_name> <args>...')
             if len(current_group) == 0:
@@ -208,14 +207,16 @@ class _ScriptDirectories(object):
             print('')
             print("Error: Incomplete or invalid script name provided")
             exit(1)
-        if args is None and len(choose_script) != 0:
+        if args is None:
+            args = choose_script
+        elif len(choose_script) != 0:
             raise ValueError(f"Script already fully define before processing .{'.'.join(choose_script)}")
 
         script = importlib.import_module(scripts)
         if hasattr(script, 'main'):
-            script.main()
+            script.main(args)
         else:
-            run_script(script.add_to_parser, script.run_from_args)
+            run_script(script.add_to_parser, script.run_from_args, args)
 
 
 directories = _ScriptDirectories()

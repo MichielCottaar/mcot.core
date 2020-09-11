@@ -1,11 +1,11 @@
 from fsl.utils.tempdir import tempdir
 from pathlib import Path
 from mcot.core.surface import CorticalMesh
-from mcot.core.write_gifti import write_gifti
-from mcot.core._scripts import ScriptDirectory
+from mcot.core import write_gifti
+from mcot.core.scripts import directories
 import numpy as np
 import nibabel as nib
-from mcot.core.testing import fsaverage_directory
+from mcot.core.surface.test_data import fsaverage_directory
 
 
 def run_roi_dist_gifti(surf_fn, roi, brain_structure, project=None):
@@ -16,11 +16,11 @@ def run_roi_dist_gifti(surf_fn, roi, brain_structure, project=None):
             cmd_project = ['-p', 'in_project.shape.gii', 'out_project.shape.gii']
         else:
             cmd_project = []
-        ScriptDirectory()(['surface', 'roi_dist_gifti', str(surf_fn), 'roi.shape.gii',
-                           '-od', 'dist.shape.gii',
-                           '-ocv', 'closest.shape.gii',
-                           '-opv', 'pred.shape.gii',
-                           ] + cmd_project)
+        directories(['surface', 'roi_dist_gifti', str(surf_fn), 'roi.shape.gii',
+                     '-od', 'dist.shape.gii',
+                     '-ocv', 'closest.shape.gii',
+                     '-opv', 'pred.shape.gii',
+                     ] + cmd_project)
         res = (
             nib.load('dist.shape.gii').darrays[0].data,
             nib.load('closest.shape.gii').darrays[0].data,
@@ -32,7 +32,7 @@ def run_roi_dist_gifti(surf_fn, roi, brain_structure, project=None):
 
 
 def test_roi_dist_gifti():
-    surf_fn = fsaverage_directory / '100000.L.white.32k_fs_LR.surf.gii'
+    surf_fn = Path(fsaverage_directory) / '100000.L.white.32k_fs_LR.surf.gii'
     surface = CorticalMesh.read(surf_fn)
     roi = np.zeros(surface.nvertices, dtype='i4')
     roi[5] = 1

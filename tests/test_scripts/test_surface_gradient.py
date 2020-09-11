@@ -2,7 +2,7 @@ from mcot.core._scripts.surface import gradient
 import numpy as np
 from scipy import sparse, spatial
 from numpy import testing
-from mcot.core.testing.surface import triangle_mesh, mesh_to_cortex
+from mcot.core.surface.test_data import triangle_mesh, mesh_to_cortex
 
 
 def test_histogram_intersection():
@@ -94,7 +94,7 @@ def test_main():
             assert (res == 0.).all()
             res = gradient.run(surface, arr, distance_metric='histogram_intersection', reduction=reduction)
             assert res.shape == (3, )
-            assert (res == 1.).all()
+            testing.assert_allclose(res, 1.)
     arr = np.arange(3)[:, None]
     res = gradient.run(surface, arr, distance_metric='euclidean', reduction='min')
     assert (res == 1).all()

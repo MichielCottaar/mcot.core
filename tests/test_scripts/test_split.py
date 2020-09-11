@@ -7,6 +7,7 @@ import nibabel as nib
 from numpy.testing import assert_allclose
 from mcot.core._scripts.split import submit
 import os
+from argparse import ArgumentParser
 
 
 @pytest.mark.skipif(platform.fsldir is None or not op.isdir(platform.fsldir),
@@ -26,7 +27,9 @@ def test_fslmaths():
         cmd[-2] = 'MASK'
         cmd[-1] = 'splitJOBID.nii.gz'
 
-        args = submit.get_parser().parse_args(('3', mask, ' '.join(cmd)))
+        parser = ArgumentParser()
+        submit.add_to_parser(parser)
+        args = parser.parse_args(('3', mask, ' '.join(cmd)))
         _environ = dict(os.environ)
         try:
             if 'SGE_ROOT' in os.environ:
