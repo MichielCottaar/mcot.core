@@ -28,6 +28,7 @@ def correct_type(arr: np.ndarray):
 def write_gifti(filename, arr_list, brain_structure, intent_list=None, color_map=None,
                 meta_list=None, **kwargs):
     """
+    Writes data to a GIFTI file
 
     :param filename: output filename
     :param arr_list: list of arrays to be stored

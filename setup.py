@@ -2,7 +2,35 @@
 
 """The setup script."""
 
-from setuptools import setup, find_namespace_packages
+from setuptools import setup, find_namespace_packages, Command
+import os.path as op
+import shutil
+
+
+class doc(Command):
+    """Build the API documentation. """
+
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import sphinx.cmd.build as sphinx_build
+
+        basedir = op.dirname(__file__)
+        docdir  = op.join(basedir, 'doc')
+        destdir = op.join(docdir, 'html')
+
+        if op.exists(destdir):
+            shutil.rmtree(destdir)
+
+        print('Building documentation [{}]'.format(destdir))
+
+        sphinx_build.main([docdir, destdir])
 
 ###################################################################
 
@@ -55,5 +83,6 @@ setup(
     entry_points={'console_scripts': [
         'mcot=mcot.core.scripts:run',
     ]},
+    cmdclass={'doc': doc},
     packages=find_namespace_packages(include=['mcot.core']),
 )
