@@ -15,8 +15,8 @@ The watershed algorithm sorts all vertices based on sulcal depth (or some other 
           parcels.
 """
 from loguru import logger
-from mcutils.surface import CorticalMesh
-from mcutils.utils.write_gifti import write_gifti
+from mcot.core.surface import CorticalMesh
+from mcot.core.write_gifti import write_gifti
 import nibabel as nib
 import numpy as np
 import numba

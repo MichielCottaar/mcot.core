@@ -2,8 +2,8 @@
 """Scatter plot of dense connectomes"""
 import cifti
 import matplotlib.pyplot as plt
-from mcutils.plot import density_scatter
-from mcutils.scripts.plot.scatter_dscalar import find_common
+from mcot.core.plot import density_scatter
+from mcot.core.scripts.plot.scatter_dscalar import find_common
 import numpy as np
 import nibabel as nib
 import os.path as op

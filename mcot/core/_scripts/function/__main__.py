@@ -1,7 +1,7 @@
 """
 Common interface to run all functional MRI scripts
 """
-from mcutils.utils.scripts import ScriptDirectory
+from mcot.core.scripts import ScriptDirectory
 import os.path as op
 
 

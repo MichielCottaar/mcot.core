@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Merge result from individual runs"""
-from mcutils.scripts.split.run import get_markers
+from .run import get_markers
 from loguru import logger
 import os.path as op
 import nibabel as nib

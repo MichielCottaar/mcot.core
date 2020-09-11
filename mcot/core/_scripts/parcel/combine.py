@@ -3,10 +3,10 @@
 Combines two parcellations into a single parcellation by multiplying them
 """
 import argparse
-from mcutils.utils import scripts
+from mcot.core import scripts
 from copy import deepcopy
 import numpy as np
-from mcutils.utils.cifti import combine
+from mcot.core.cifti import combine
 
 
 def run(arr1, label1, arr2, label2):

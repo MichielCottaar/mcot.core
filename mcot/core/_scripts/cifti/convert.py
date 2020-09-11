@@ -1,6 +1,6 @@
 """Converts between CIFTI formats (NIFTI, HDF5, and zarr)"""
 from loguru import logger
-from mcutils.utils.greyordinate import GreyOrdinates
+from mcot.core.greyordinate import GreyOrdinates
 import zarr
 import dask.array as da
 import numpy as np

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Scatter plot of gifti files"""
 import matplotlib.pyplot as plt
-from mcutils.plot import density_scatter
+from mcot.core.plot import density_scatter
 import nibabel as nib
 
 

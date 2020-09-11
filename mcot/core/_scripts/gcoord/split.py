@@ -13,5 +13,5 @@ def main():
     parser.add_argument('-g', '--gyral', help='Filename for the gyral output (overrides the --base option)')
 
     args = parser.parse_args()
-    from mcutils.surface import utils
+    from mcot.core.surface import utils
     utils.gcoord_split(args)

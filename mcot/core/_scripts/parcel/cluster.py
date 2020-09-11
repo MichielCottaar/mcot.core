@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 """Clusters the surface based on provided features"""
 from loguru import logger
-from mcutils.scripts.surface import gradient
-from mcutils.surface import CorticalMesh
-from mcutils.utils.write_gifti import write_gifti
+from mcot.core.scripts.surface import gradient
+from mcot.core.surface import CorticalMesh
+from mcot.core.write_gifti import write_gifti
 import numpy as np
 from sklearn import cluster as skcluster
-from mcutils.utils.greyordinate import GreyOrdinates
+from mcot.core.greyordinate import GreyOrdinates
 
 
 def cluster(similarity, method='spectral', n_clusters=10, **kwargs):

@@ -1,7 +1,7 @@
 """
 Selects vertices on surface to run tractography from
 """
-from mcutils.surface import CorticalMesh
+from mcot.core.surface import CorticalMesh
 import numpy as np
 
 

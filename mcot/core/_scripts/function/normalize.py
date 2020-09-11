@@ -4,7 +4,7 @@ Normalizes the functional MRI data based on the noise level and concatenates res
 
 Based on the variance_normalize.m script from Saad Jbabdi
 """
-from mcutils.utils import scripts
+from mcot.core import scripts
 from scipy import linalg
 import numpy as np
 import cifti

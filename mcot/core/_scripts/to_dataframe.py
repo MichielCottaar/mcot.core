@@ -12,7 +12,7 @@ import nibabel as nib
 from nibabel import gifti
 import pandas as pd
 import numpy as np
-from mcutils.surface import BrainStructure
+from mcot.core.surface import BrainStructure
 import cifti
 from nibabel.cifti2 import Cifti2Image
 from nibabel.filebasedimages import ImageFileError

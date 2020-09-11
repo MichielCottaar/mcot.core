@@ -1,7 +1,7 @@
 """
 Scripts to interact with FileTrees
 """
-from mcutils.utils.scripts import ScriptDirectory
+from mcot.core.scripts import ScriptDirectory
 import os.path as op
 
 

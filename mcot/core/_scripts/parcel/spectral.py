@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 """Parcellates the surface based on clustering similar fingerprints"""
-from mcutils.surface import CorticalMesh
+from mcot.core.surface import CorticalMesh
 import numpy as np
 from loguru import logger
-from mcutils.scripts.surface import gradient
-from mcutils.scripts.parcel import cluster, random
-from mcutils.utils.write_gifti import write_gifti
-from mcutils.utils.greyordinate import GreyOrdinates
+from mcot.core.scripts.surface import gradient
+from mcot.core.scripts.parcel import cluster, random
+from mcot.core.write_gifti import write_gifti
+from mcot.core.greyordinate import GreyOrdinates
 
 
 def run(surface: CorticalMesh, features, n_iter=20, metric='spearman', method='spectral'):

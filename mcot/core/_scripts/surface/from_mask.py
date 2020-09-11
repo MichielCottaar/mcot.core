@@ -9,7 +9,7 @@ You might want to run `mc_script surface smooth` afterwards to get a nicer looki
 """
 import argparse
 from skimage import measure
-from mcutils.surface import Mesh2D
+from mcot.core.surface import Mesh2D
 from numpy import linalg
 import nibabel as nib
 import numpy as np

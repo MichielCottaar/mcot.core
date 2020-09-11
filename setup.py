@@ -25,9 +25,6 @@ CLASSIFIERS = [
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
-
 requirements = [
     'numpy',
     'scipy',
@@ -46,7 +43,7 @@ setup(
     author_email='MichielCottaar@pm.me',
     version=VERSION,
     description="core utilities to work with my code",
-    long_description=readme + '\n\n' + history,
+    long_description=readme,
     long_description_content_type="text/x-rst",
     license="MIT",
     url="https://git.fmrib.ox.ac.uk/ndcn0236/mcutils",

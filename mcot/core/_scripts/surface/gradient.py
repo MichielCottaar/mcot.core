@@ -7,8 +7,8 @@ as well as histogram intersection (http://blog.datadive.net/histogram-intersecti
 """
 import numpy as np
 from scipy import spatial, sparse
-from mcutils.surface import CorticalMesh
-from mcutils.utils.greyordinate import GreyOrdinates
+from mcot.core.surface import CorticalMesh
+from mcot.core.greyordinate import GreyOrdinates
 from concurrent import futures
 from nibabel import cifti2
 

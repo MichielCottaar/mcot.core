@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """Randomly parcellates a surface"""
-from mcutils.surface import CorticalMesh
+from mcot.core.surface import CorticalMesh
 import nibabel as nib
 import numpy as np
-from mcutils.utils import kmedoids, write_gifti
+from mcot.core import kmedoids, write_gifti
 from scipy.sparse import csgraph
 import os.path as op
 from loguru import logger

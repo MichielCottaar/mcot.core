@@ -34,5 +34,5 @@ def main():
     args = parser.parse_args()
     if args.outside_pial and args.algorithm == 'line':
         raise ValueError("Algorithm 'line' can not include voxels outside of the pial surface.")
-    from mcutils.surface import orientation
+    from mcot.core.surface import orientation
     orientation.run_from_args(args)

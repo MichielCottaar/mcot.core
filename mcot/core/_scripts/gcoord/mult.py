@@ -11,5 +11,5 @@ def main():
     parser.add_argument('-o', '--output', required=True, help='Output NIFTI files with the fibre orientations in gyral coordinates')
 
     args = parser.parse_args()
-    from mcutils.surface import utils
+    from mcot.core.surface import utils
     utils.gcoord_mult(args)

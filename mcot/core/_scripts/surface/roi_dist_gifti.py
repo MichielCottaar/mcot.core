@@ -2,8 +2,8 @@
 """
 For every vertex computes the distance to the closest point in a ROI
 """
-from mcutils.surface import CorticalMesh
-from mcutils.utils.write_gifti import write_gifti
+from mcot.core.surface import CorticalMesh
+from mcot.core.write_gifti import write_gifti
 import nibabel as nib
 import numpy as np
 from scipy.sparse import csgraph

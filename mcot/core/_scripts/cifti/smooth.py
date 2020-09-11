@@ -3,10 +3,10 @@
 Smooths the values in the GIFTI or CIFTI file across the surface
 """
 from loguru import logger
-from mcutils.utils import scripts
+from mcot.core import scripts
 import numpy as np
 import cifti
-from mcutils.surface.cortical_mesh import BrainStructure
+from mcot.core.surface.cortical_mesh import BrainStructure
 
 
 def smooth(surface, array, width, vertices=None, axis=-1):

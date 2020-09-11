@@ -6,7 +6,7 @@ The full HCP directory structure is reproduced in the target directory with syml
 The resulting directory will contain the structural, diffusion, and functional data.
 """
 import argparse
-from mcutils import hcp_dir
+from mcot.core import hcp_dir
 
 
 def run_from_args(args):

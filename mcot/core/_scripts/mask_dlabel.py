@@ -4,7 +4,7 @@
 if discard is set simply removes all the voxels/vertices that are <= 0.
 Otherwise replace those voxels/vertices outside of the mask with a new label (called "outside_mask).
 """
-from mcutils.scripts.plot.scatter_dscalar import find_common
+from mcot.core.scripts.plot.scatter_dscalar import find_common
 import cifti
 import numpy as np
 

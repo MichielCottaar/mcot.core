@@ -7,7 +7,7 @@ import argparse
 from fsl.utils.filetree import FileTree
 from fsl.utils.filetree.utils import Template
 from loguru import logger
-from mcutils.sync import sync
+from mcot.core.sync import sync
 from typing import Sequence
 import itertools
 

@@ -2,7 +2,7 @@
 """Scatter plot of dense scalar files"""
 import cifti
 import matplotlib.pyplot as plt
-from mcutils.plot import density_scatter, default_grid
+from mcot.core.plot import density_scatter, default_grid
 import numpy as np
 
 

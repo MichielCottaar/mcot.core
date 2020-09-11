@@ -4,7 +4,7 @@ Smooths the surface mesh
 Similar to the wb_command implementation, but includes additional options for volume preservation.
 This difference is only really relevant for small meshes (i.e., with high curvature).
 """
-from mcutils.surface import CorticalMesh
+from mcot.core.surface import CorticalMesh
 
 
 def run_from_args(args):

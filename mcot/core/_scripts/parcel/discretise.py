@@ -3,10 +3,10 @@
 Discretizes a continuous variable
 """
 from loguru import logger
-from mcutils.utils import scripts
+from mcot.core import scripts
 import numpy as np
-from mcutils.utils import colour
-from mcutils.utils.cifti import combine
+from mcot.core import colour
+from mcot.core.cifti import combine
 
 
 def run_array(arr, nbins, bins=None, weight=None, include_zeros=False):

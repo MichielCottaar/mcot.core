@@ -17,5 +17,5 @@ def main():
     parser.add_argument('--distance', help='Optional NIFTI file with the distance from the WM/GM boundary')
     parser.add_argument('-ri', '--radial-index', help='Optional NIFTI file output containing the radial index of the best-fit model')
     args = parser.parse_args()
-    from mcutils.surface import radial_transition
+    from mcot.core.surface import radial_transition
     radial_transition.run_from_args(args)

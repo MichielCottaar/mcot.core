@@ -88,16 +88,16 @@ def main():
     if args.commands == 'generate':
         args.flip_inpr = False
         args.zval = None
-        from mcutils.surface import orientation
+        from mcot.core.surface import orientation
         orientation.run_from_args(args)
     elif args.commands == 'split':
-        from mcutils.surface import utils
+        from mcot.core.surface import utils
         utils.gcoord_split(args)
     elif args.commands == 'multiply':
-        from mcutils.surface import utils
+        from mcot.core.surface import utils
         utils.gcoord_mult(args)
     elif args.commands == 'transition':
-        from mcutils.surface import radial_transition
+        from mcot.core.surface import radial_transition
         radial_transition.run_from_args(args)
     else:
         raise ValueError("Unrecognized sub-command %s" % args.commands)

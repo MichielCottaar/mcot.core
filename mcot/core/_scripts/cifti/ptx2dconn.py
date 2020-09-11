@@ -8,8 +8,8 @@ from nibabel.filebasedimages import ImageFileError
 import numpy as np
 import pandas as pd
 from scipy import sparse
-from mcutils.surface.cortical_mesh import get_brain_structure, CorticalMesh
-from mcutils.utils.greyordinate import GreyOrdinates
+from mcot.core.surface.cortical_mesh import get_brain_structure, CorticalMesh
+from mcot.core.greyordinate import GreyOrdinates
 from loguru import logger
 
 

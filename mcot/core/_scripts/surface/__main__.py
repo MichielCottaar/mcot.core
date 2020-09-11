@@ -1,7 +1,7 @@
 """
 Scripts to process GIFTI surfaces (also see parcel sub-group)
 """
-from mcutils.utils.scripts import ScriptDirectory
+from mcot.core.scripts import ScriptDirectory
 import os.path as op
 
 
