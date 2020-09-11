@@ -18,29 +18,24 @@ def get_names(scripts=None):
     return [scripts]
 
 
-@pytest.fixture('script_name', get_names())
-def test_import(script_name):
-    load_all_mcot()
-    scripts = directories.all_scripts()
+@pytest.mark.parametrize('module', get_names())
+def test_import(module):
 
-    for module in script_dir:
-        if module in (
-            'gcoord.gui',
-        ):
-             continue
-        print(module)
-        filename, _ = script_dir.get(module.split('.'))
+    if module in (
+        'gcoord.gui',
+    ):
+         return
+    print(module)
+    script = importlib.import_module(module)
 
-        script = importlib.import_module(filename)
+    assert xor(
+        hasattr(script, 'main'),
+        hasattr(script, 'run_from_args') and hasattr(script, 'add_to_parser')
+    ), "Found no or multiple ways to call the fuunction"
+    if not hasattr(script, 'main'):
+        parser = ArgumentParser()
+        assert getattr(script, 'add_to_parser')(parser) is None
+        assert isinstance(parser, ArgumentParser)
 
-        assert xor(
-            hasattr(script, 'main'),
-            hasattr(script, 'run_from_args') and hasattr(script, 'add_to_parser')
-        ), "Found no or multiple ways to call the fuunction"
-        if not hasattr(script, 'main'):
-            parser = ArgumentParser()
-            assert getattr(script, 'add_to_parser')(parser) is None
-            assert isinstance(parser, ArgumentParser)
-
-        with pytest.raises(SystemExit):
-            script_dir([module, '-h'])
+    with pytest.raises(SystemExit):
+        directories([module, '-h'])

@@ -3,9 +3,9 @@
 from mcot.core.surface import CorticalMesh
 import numpy as np
 from loguru import logger
-from mcot.core.scripts.surface import gradient
-from mcot.core.scripts.parcel import cluster, random
-from mcot.core.write_gifti import write_gifti
+from ..surface import gradient
+from ..parcel import cluster, random
+from mcot.core import write_gifti
 from mcot.core.greyordinate import GreyOrdinates
 
 

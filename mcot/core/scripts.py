@@ -13,7 +13,7 @@ import os.path as op
 from nibabel import gifti
 import numpy as np
 from .surface.cortical_mesh import get_brain_structure, CorticalMesh, BrainStructure
-from .write_gifti import write_gifti
+from . import write_gifti
 from nibabel.filebasedimages import ImageFileError
 import sys
 from .log import setup_log

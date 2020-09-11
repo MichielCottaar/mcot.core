@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """Clusters the surface based on provided features"""
 from loguru import logger
-from mcot.core.scripts.surface import gradient
+from ..surface import gradient
 from mcot.core.surface import CorticalMesh
-from mcot.core.write_gifti import write_gifti
+from mcot.core import write_gifti
 import numpy as np
 from sklearn import cluster as skcluster
 from mcot.core.greyordinate import GreyOrdinates

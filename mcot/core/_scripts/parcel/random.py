@@ -3,10 +3,89 @@
 from mcot.core.surface import CorticalMesh
 import nibabel as nib
 import numpy as np
-from mcot.core import kmedoids, write_gifti
+from mcot.core import write_gifti
 from scipy.sparse import csgraph
 import os.path as op
 from loguru import logger
+import numpy as np
+from loguru import logger
+
+
+def init_random(distance):
+    """Random initialization of the medoid centers.
+    """
+    indices = np.arange(distance.shape[0], dtype='int')
+    np.random.shuffle(indices)
+    return indices
+
+
+def init_center(distance):
+    """Initalize medoid centers with the points with the lowest total distance.
+    """
+    dist_normed = distance / np.sum(distance, -1)[:, None]
+    total_dist_normed = np.sum(dist_normed, 0)
+    return np.argsort(total_dist_normed)
+
+
+def update_centers(distance, labels):
+    """Updates the cluster centers.
+    """
+    nclus = np.unique(labels).size
+    centers = np.zeros(nclus, dtype='int')
+    for label in range(nclus):
+        use = label == labels
+        subdist = distance[use, :][:, use]
+        centers[label] = np.where(use)[0][np.argmin(np.sum(subdist, -1))]
+    return centers
+
+
+def update_labels(distance, centers):
+    """Update the point labels.
+    """
+    return np.argmin(distance[:, centers], -1)
+
+
+def calc_distance(distance, centers, labels):
+    """Calculate the distance between the cluster centra and the labels.
+    """
+    return sum([sum(distance[centers[label], labels == label]) for label in range(centers.size)])
+
+
+def kmedoids(distance, nclus=10, init='center', max_loops=6):
+    """
+    Runs the k-medoids clustering algorithm.
+
+    based on Park & Jun (2008): http://www.sciencedirect.com/science/article/pii/S095741740800081X
+
+    :param distance: NxN distance matrix
+    :param nclus: number of clusters
+    :param init: initialization ('random' or 'center')
+    :param max_loops: maximum number of loops
+    :return: tuple with
+
+        - `centers`: indices of the cluster centers
+        - `labels`: N-length integer array of cluster labels
+    """
+    if init == 'random':
+        centers = init_random(distance)[:nclus]
+    elif init == 'center':
+        centers = init_center(distance)[:nclus]
+    else:
+        centers = init
+    old_labels = -np.ones(distance.shape[0])
+    for idx_loop in range(max_loops):
+        print(idx_loop)
+        print('updating')
+        labels = update_labels(distance, centers)
+        if (labels == old_labels).all():
+            logger.info('Found optimum after {} loops'.format(idx_loop + 1))
+            break
+        old_labels = labels
+        print('update centres')
+        centers = update_centers(distance, labels)
+    else:
+        logger.warning("Failed to find maximum")
+    return centers, labels
 
 
 def uniform_centroids(dist_map, n_centroids):

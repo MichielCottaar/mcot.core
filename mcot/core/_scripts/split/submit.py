@@ -7,7 +7,7 @@ e.g., to submit dtifit in 4 individual jobs run:
 mc_script split.submit 4 nodif_brain_mask.nii.gz -q short.q "dtifit -m MASK -b bvals -k data -r bvecs -o dtiJOBID"
 """
 from loguru import logger
-from mcot.core.pipe import SubmitParams
+from fsl.utils.fslsub import SubmitParams
 import string
 
 

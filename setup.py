@@ -35,6 +35,7 @@ requirements = [
     'fslpy',
     'zarr',
     'h5py',
+    'colorcet',
 ]
 
 setup(

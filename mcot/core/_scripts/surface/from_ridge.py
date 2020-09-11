@@ -3,7 +3,7 @@
 Assigns each vertex the value from the closest ridge (BUGGY)
 """
 from mcot.core.surface import CorticalMesh, track
-from mcot.core.write_gifti import write_gifti
+from mcot.core import write_gifti
 import nibabel as nib
 
 

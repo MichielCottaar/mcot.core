@@ -5,7 +5,7 @@ Discretizes a continuous variable
 from loguru import logger
 from mcot.core import scripts
 import numpy as np
-from mcot.core import colour
+import colorcet as cc
 from mcot.core.cifti import combine
 
 
@@ -101,7 +101,7 @@ def run_from_args(args):
         arr, args.nbins, bins=bins, weight=weight, include_zeros=args.include_zeros
     )
     labels = [{int(idx): (f'{start:.2f} to {end:.2f}', c) for idx, start, end, c in zip(
-            range(1, 100), used_bins[:-1], used_bins[1:], colour.qualitative())}]
+            range(1, 100), used_bins[:-1], used_bins[1:], cc.glasbey)}]
     new_axes = (axes[0].to_label(labels), ) + axes[1:]
     args.output((res, new_axes))
 

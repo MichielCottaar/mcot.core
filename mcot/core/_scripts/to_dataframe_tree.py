@@ -14,7 +14,7 @@ import os.path as op
 from fsl.utils.filetree import FileTree
 from typing import Sequence
 import pandas as pd
-from mcot.core.scripts import to_dataframe
+from . import to_dataframe
 
 
 def run(tree: FileTree, names: Sequence[str],
