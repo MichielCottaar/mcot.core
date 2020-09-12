@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 """Correlates two CIFTI files"""
-import cifti
+from nibabel import cifti2
 import numpy as np
 from scipy import stats
 from loguru import logger
 import os.path as op
 import time
-from nibabel.cifti2 import Cifti2Image
 
 
 def correlate_arr(arr1, arr2, collapse=False):
@@ -92,13 +91,13 @@ def correlate(dconn1, dconn2, select_features=slice(None)):
     return res
 
 
-def run(dconn1, dconn2, split_greyordinates: cifti.BrainModel=None):
+def run(dconn1, dconn2, split_greyordinates: cifti2.BrainModelAxis=None):
     """
     Computes the correlation between dense connectomes
 
     :param dconn1: (M, N) nibabel Cifti2Image
     :param dconn2: (M, N) nibabel Cifti2Image
-    :param split_greyordinates: cifti.BrainModel axis with the voxels/vertices
+    :param split_greyordinates: defines M voxels/vertices to select sub-set of features the features
     :return: dictionary mapping names of target regions to (N, ) arrays
     """
     logger.info('Computing full correlation')
@@ -138,22 +137,22 @@ def run_from_args(args):
     Runs the script based on a Namespace containing the command line arguments
     """
     logger.info('starting %s', op.basename(__file__))
-    dconn1 = Cifti2Image.from_filename(args.input)
-    axes1 = cifti.get_axes(dconn1)
-    dconn2 = Cifti2Image.from_filename(args.reference)
-    axes2 = cifti.get_axes(dconn2)
-    if not (isinstance(axes1[1], cifti.BrainModel) or isinstance(axes1[1], cifti.Parcels)):
+    dconn1 = cifti2.load(args.input)
+    axes1 = dconn1.header.get_axis(dconn1)
+    dconn2 = cifti2.load(args.reference)
+    axes2 = dconn2.header.get_axis(dconn2)
+    if not (isinstance(axes1[1], cifti2.BrainModelAxis) or isinstance(axes1[1], cifti2.ParcelsAxis)):
         raise ValueError("Columns should have greyordinates or parcels")
     if axes1[1] != axes2[1]:
         raise ValueError("Compared CIFTI files should have the same greyordinates/parcels along the columns")
     if args.as_dconn:
-        if isinstance(axes1[0], cifti.Series):
+        if isinstance(axes1[0], cifti2.SeriesAxis):
             axes1 = (axes1[1], ) * 2
             dconn1 = FakeDConn(dconn1)
-        elif isinstance(axes2[0], cifti.Series):
+        elif isinstance(axes2[0], cifti2.SeriesAxis):
             axes2 = (axes2[1], ) * 2
             dconn2 = FakeDConn(dconn2)
-    if args.split_dconn and not isinstance(axes1[0], cifti.BrainModel):
+    if args.split_dconn and not isinstance(axes1[0], cifti2.BrainModelAxis):
         raise ValueError("Rows should be greyordinates when using the option --split_dconn")
     if axes1[0] != axes2[0]:
         raise ValueError("Compared CIFTI files should have the same features along the rows")
@@ -162,9 +161,9 @@ def run_from_args(args):
             dconn2=dconn2,
             split_greyordinates=axes1[0] if args.split_dconn else None,
     )
-    scalar = cifti.Scalar.from_names(list(as_dict.keys()))
+    scalar = cifti2.ScalarAxis(list(as_dict.keys()))
     arr = np.stack(list(as_dict.values()), -1)
-    cifti.write(args.output, arr.T, (scalar, axes1[1]))
+    cifti2.Cifti2Image(arr.T, header=(scalar, axes1[1])).to_filename(args.output)
     logger.info('ending %s', op.basename(__file__))
 
 
