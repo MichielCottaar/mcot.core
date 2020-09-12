@@ -65,7 +65,6 @@ requirements = [
     'h5py',
     'colorcet',
     'dask[array]',
-    'cifti',
 ]
 
 setup(

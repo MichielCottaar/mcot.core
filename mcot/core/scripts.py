@@ -1,13 +1,12 @@
 """
 Utilities to create a common interface to all the scripts
 """
-from pathlib import Path
 import pkgutil
-from typing import Union, Iterator, Sequence, Tuple
+from typing import Union, Sequence, Tuple
 import importlib
 import ast
 import nibabel as nib
-import cifti
+from nibabel import cifti2
 import argparse
 import os.path as op
 from nibabel import gifti
@@ -240,9 +239,9 @@ def _nifti2cifti(img):
     while mask.ndim > 3:
         mask = mask.any(-1)
     arr = arr[mask]
-    bm = cifti.BrainModel.from_mask(mask, affine=img.affine)
+    bm = cifti2.BrainModelAxis.from_mask(mask, affine=img.affine)
     assert len(bm) == arr.shape[0]
-    axes = tuple(cifti.Series(0, 1, sz) for sz in arr.shape[1:]) + (bm, )
+    axes = tuple(cifti2.SeriesAxis(0, 1, sz) for sz in arr.shape[1:]) + (bm, )
     return arr.T, axes
 
 
@@ -251,13 +250,13 @@ def _gifti2cifti(left, right, table=None):
         mask_left = np.isfinite(left) & (left != 0)
         while mask_left.ndim > 1:
             mask_left = mask_left.any(-1)
-        bm_left = cifti.BrainModel.from_mask(mask_left, 'CortexLeft')
+        bm_left = cifti2.BrainModelAxis.from_mask(mask_left, 'CortexLeft')
 
     if right.size != 0:
         mask_right = np.isfinite(right) & (right != 0)
         while mask_right.ndim > 1:
             mask_right = mask_right.any(-1)
-        bm_right = cifti.BrainModel.from_mask(mask_right, 'CortexRight')
+        bm_right = cifti2.BrainModelAxis.from_mask(mask_right, 'CortexRight')
 
         if left.size == 0:
             bm = bm_right
@@ -277,15 +276,15 @@ def _gifti2cifti(left, right, table=None):
 
     new_axes = tuple(range(1, farr.ndim)) + (0, )
     if table is None:
-        axes = tuple(cifti.Scalar.from_names(['???'] * sz) for sz in farr.shape[1:]) + (bm, )
+        axes = tuple(cifti2.ScalarAxis(['???'] * sz) for sz in farr.shape[1:]) + (bm, )
         return np.transpose(farr, new_axes), axes
-    lab = cifti.Scalar.from_names(['???'] * farr.shape[1]).to_label([table] * farr.shape[1])
+    lab = cifti2.ScalarAxis(['???'] * farr.shape[1]).to_label([table] * farr.shape[1])
     return np.transpose(farr, new_axes), (lab, bm)
 
 
 def _cifti2nifti(arr, axes):
     bm = axes[-1]
-    if not isinstance(bm, cifti.BrainModel):
+    if not isinstance(bm, cifti2.BrainModelAxis):
         raise ValueError(f"CIFTI file should be dense to extract volumetric array")
     full_vol = np.zeros(bm.volume_shape + arr.shape[:-1])
     full_vol[tuple(bm.voxel[~bm.is_surface].T)] = arr[..., ~bm.is_surface].T
@@ -295,7 +294,7 @@ def _cifti2nifti(arr, axes):
 def _cifti2gifti(arr, axes, get_label=False):
     res = [np.array(()), np.array(())]
     bm = axes[-1]
-    if not isinstance(bm, cifti.BrainModel):
+    if not isinstance(bm, cifti2.BrainModelAxis):
         raise argparse.ArgumentTypeError(f"CIFTI file should be dense to extract surface array")
     for name, slc, sub_bm in bm.iter_structures():
         anatomy = BrainStructure.from_string(name)
@@ -307,7 +306,7 @@ def _cifti2gifti(arr, axes, get_label=False):
     if not get_label:
         return tuple(res)
     label = axes[0]
-    if not isinstance(label, cifti.Label):
+    if not isinstance(label, cifti2.LabelAxis):
         raise ValueError("Input axis must be Label to extract parcellation label table")
     return tuple(res), label.label[0]
 
@@ -347,7 +346,7 @@ def greyordinate_in(value):
     except ImageFileError:
         pass
     if isinstance(img, nib.Cifti2Image):
-        return cifti.read(img)
+        return np.asarray(img.dataobj), [img.get_axis(idx) for idx in range(img.ndim)]
     elif isinstance(img, gifti.GiftiImage):
         arr = np.squeeze(np.stack([darr.data for darr in img.darrays], 0))
         if img.labeltable is not None and len(img.labeltable.labels) > 1:
@@ -379,7 +378,7 @@ def surface_arr_in(value):
     except ImageFileError:
         pass
     if isinstance(img, nib.Cifti2Image):
-        arr, axes = cifti.read(img)
+        arr, axes = np.asarray(img.dataobj), [img.get_axis(idx) for idx in range(img.ndim)]
         res = _cifti2gifti(arr, axes)
         if res[0].size == 0 and res[1].size == 0:
             raise argparse.ArgumentTypeError(f"CIFTI file {value} does not contain cortical surface")
@@ -408,7 +407,7 @@ def surface_label_in(value):
     except ImageFileError:
         pass
     if isinstance(img, nib.Cifti2Image):
-        arr, axes = cifti.read(img)
+        arr, axes = np.asarray(img.dataobj), [img.get_axis(idx) for idx in range(img.ndim)]
         res, table = _cifti2gifti(arr, axes, get_label=True)
         if res[0].size == 0 and res[1].size == 0:
             raise argparse.ArgumentTypeError(f"CIFTI file {value} does not contain cortical surface")
@@ -438,7 +437,7 @@ def volume_in(value):
     except ImageFileError:
         pass
     if isinstance(value, nib.Cifti2Image):
-        arr, axes = cifti.read(img)
+        arr, axes = np.asarray(img.dataobj), [img.get_axis(idx) for idx in range(img.ndim)]
         return _cifti2nifti(arr, axes)
     else:
         return img
@@ -519,7 +518,8 @@ def output(path, format=None):
             elif format == 'NIFTI':
                 obj.to_filename(path)
             else:
-                cifti.write(path, *_nifti2cifti(obj))
+                arr, axes = _nifti2cifti(obj)
+                cifti2.Cifti2Image(arr, header=axes).to_filename(path)
             return
 
         part1, part2 = obj
@@ -542,7 +542,8 @@ def output(path, format=None):
                     write_gifti(fn1, [part1], 'CortexLeft')
                     write_gifti(fn2, [part2], 'CortexRight')
             else:
-                cifti.write(path, *_gifti2cifti(part1, part2))
+                arr, axes = _gifti2cifti(part1, part2)
+                cifti2.Cifti2Image(arr, header=axes).to_filename(path)
         elif isinstance(part1, tuple):
             # surface labels
             arr1, table1 = part1
@@ -567,10 +568,11 @@ def output(path, format=None):
                 if table1 != table2:
                     raise ValueError("Label tables should be the same for both surfaces to " +
                                      "combine into single CIFTI file")
-                cifti.write(path, *_gifti2cifti(arr1, arr2, table=table1))
+                arr, axes = _gifti2cifti(arr1, arr2, table=table1)
+                cifti2.Cifti2Image(arr, header=axes).to_filename(path)
         else:
             if format == 'CIFTI':
-                cifti.write(path, part1, part2)
+                cifti2.Cifti2Image(part1, header=part2).to_filename(path)
             elif format == 'NIFTI':
                 _cifti2nifti(part1, part2).to_filename(path)
             else:
