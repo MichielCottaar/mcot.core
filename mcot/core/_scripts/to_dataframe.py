@@ -13,7 +13,7 @@ from nibabel import gifti
 import pandas as pd
 import numpy as np
 from mcot.core.surface import BrainStructure
-import cifti
+from nibabel import cifti2
 from nibabel.cifti2 import Cifti2Image
 from nibabel.filebasedimages import ImageFileError
 
@@ -118,9 +118,12 @@ def from_cifti(filename: str, basename=''):
     :param basename: basename of the dataframe columns
     :return: pandas datraframe with any voxels/vertices in the dense input
     """
-    arr, (axis, bm) = cifti.read(filename)
+    img = cifti2.load(filename)
+    arr = np.asarray(img.dataobj)
+    axis = img.header.get_axis(0)
+    bm = img.header.get_axis(1)
 
-    if not isinstance(bm, cifti.BrainModel):
+    if not isinstance(bm, cifti2.BrainModelAxis):
         raise ValueError(f'Input CIFTI file {filename} is not dense')
 
     as_dict = {
@@ -132,21 +135,21 @@ def from_cifti(filename: str, basename=''):
         ('structure', 'region'): [BrainStructure.from_string(name).primary for name in bm.name],
         ('structure', 'cifti_label'): bm.name
     }
-    if isinstance(axis, cifti.Scalar):
+    if isinstance(axis, cifti2.ScalarAxis):
         for sub_arr, name in zip(arr, axis.name):
             if len(axis) == 1:
                 name = ''
             as_dict[(basename, name)] = sub_arr
-    elif isinstance(axis, cifti.Series):
+    elif isinstance(axis, cifti2.SeriesAxis):
         for sub_arr, name in zip(arr, np.arange(len(axis))):
             as_dict[(basename, name)] = sub_arr
-    elif isinstance(axis, cifti.Label):
+    elif isinstance(axis, cifti2.LabelAxis):
         for sub_arr, name, mapping in zip(arr, axis.name, axis.label):
             if len(axis) == 1:
                 name = ''
             label_names = {key: value[0] for key, value in mapping.items()}
             as_dict[(basename, name)] = label_names[sub_arr]
-    elif isinstance(axis, cifti.Parcels):
+    elif isinstance(axis, cifti2.ParcelsAxis):
         for sub_arr, name in zip(arr, axis.name):
             as_dict[(basename, name)] = sub_arr
     df = pd.DataFrame.from_dict(as_dict)

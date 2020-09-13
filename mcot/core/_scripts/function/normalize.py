@@ -7,7 +7,7 @@ Based on the variance_normalize.m script from Saad Jbabdi
 from mcot.core import scripts
 from scipy import linalg
 import numpy as np
-import cifti
+from nibabel import cifti2
 
 
 def run(data, demean=True):
@@ -56,7 +56,7 @@ def run_from_args(args):
             assert ref_axes == axes
     full_arr = np.concatenate(res, 0)
     series = ref_axes[0]
-    new_series = cifti.Series(series.start, series.step, full_arr.shape[0], series.unit)
+    new_series = cifti2.SeriesAxis(series.start, series.step, full_arr.shape[0], series.unit)
     args.output((full_arr, (new_series, ref_axes[1])))
 
 

@@ -5,7 +5,7 @@ Smooths the values in the GIFTI or CIFTI file across the surface
 from loguru import logger
 from mcot.core import scripts
 import numpy as np
-import cifti
+from nibabel import cifti2
 from mcot.core.surface.cortical_mesh import BrainStructure
 
 
@@ -78,7 +78,7 @@ def smooth_cifti(arr, axes, surfaces, width, overwrite=False):
 
     smoothed = False
     for dim, bm in enumerate(axes):
-        if isinstance(bm, cifti.BrainModel):
+        if isinstance(bm, cifti2.BrainModelAxis):
             selector = [slice(None)] * arr.ndim
             for name, slc, bm_part in bm.iter_structures():
                 name = BrainStructure.from_string(name)
