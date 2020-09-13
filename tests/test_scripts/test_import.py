@@ -22,7 +22,7 @@ def get_names(scripts=None):
 def test_import(module):
 
     if module in (
-        'gcoord.gui',
+        'mcot.core._scripts.gcoord.gui',
     ):
          return
     print(module)
