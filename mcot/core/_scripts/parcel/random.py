@@ -2,11 +2,9 @@
 """Randomly parcellates a surface"""
 from mcot.core.surface import CorticalMesh
 import nibabel as nib
-import numpy as np
 from mcot.core import write_gifti
 from scipy.sparse import csgraph
 import os.path as op
-from loguru import logger
 import numpy as np
 from loguru import logger
 
