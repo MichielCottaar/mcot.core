@@ -4,7 +4,7 @@ import nibabel as nib
 from loguru import logger
 import numpy as np
 import colorcet as cc
-from mcot.core.surface.cortical_mesh import BrainStructure
+from .surface.cortical_mesh import BrainStructure
 
 
 def correct_type(arr: np.ndarray):
