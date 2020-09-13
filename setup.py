@@ -88,5 +88,5 @@ setup(
         'mcot=mcot.core.scripts:run',
     ]},
     cmdclass={'doc': doc},
-    packages=find_namespace_packages(include=['mcot.core']),
+    packages=find_namespace_packages(include=['mcot.core*']),
 )
