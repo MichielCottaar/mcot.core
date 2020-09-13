@@ -21,7 +21,7 @@ def correct_type(arr: np.ndarray):
     if arr.dtype == np.int:
         return arr.astype(np.int32)
     if arr.dtype == np.uint:
-        return arr.astype(np.in32)
+        return arr.astype(np.int32)
     return arr
 
 
