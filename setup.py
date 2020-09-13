@@ -66,6 +66,7 @@ requirements = [
     'colorcet',
     'dask[array]',
     'pandas',
+    'sklearn',
 ]
 
 setup(
