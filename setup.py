@@ -67,7 +67,7 @@ requirements = [
     'dask[array]',
     'pandas',
     'sklearn',
-    'skimage',
+    'scikit-image',
 ]
 
 setup(
