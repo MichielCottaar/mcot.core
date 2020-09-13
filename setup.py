@@ -65,6 +65,7 @@ requirements = [
     'h5py',
     'colorcet',
     'dask[array]',
+    'pandas',
 ]
 
 setup(
