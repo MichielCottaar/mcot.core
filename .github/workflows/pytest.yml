@@ -25,6 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        python -m pip install git+https://git.fmrib.ox.ac.uk/fsl/fslpy.git
         python -m pip install -r requirements_dev.txt
     - name: Test with pytest
       run: |
