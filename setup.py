@@ -34,7 +34,7 @@ class doc(Command):
 
 ###################################################################
 
-VERSION = '0.2.2'
+VERSION = '0.2.3'
 KEYWORDS = []
 CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
