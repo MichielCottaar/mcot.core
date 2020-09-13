@@ -15,7 +15,7 @@ core utilities to run most of my code
 
 
 * Free software: MIT license
-* Documentation: https://mcot.core.readthedocs.io.
+* Documentation: https://mcotcore.readthedocs.io.
 
 
 Features
