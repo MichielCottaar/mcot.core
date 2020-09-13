@@ -1,7 +1,6 @@
 from loguru import logger
 import os
 import sys
-from logging.handlers import TimedRotatingFileHandler
 
 
 SUBMITTED = os.getenv('FSLSUBALREADYRUN', default='') == 'true'
