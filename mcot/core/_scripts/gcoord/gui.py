@@ -2,7 +2,7 @@
 """GUI for interacting with gyral coordinate scripts"""
 try:
     from gooey import Gooey, GooeyParser
-except ImportError:
+except ModuleNotFoundError:
     raise ImportError("You need to install the gooey python library to run the gyral coordinate GUI")
 
 
